@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrostPhase</title>
+    <link rel="icon" type="image/jpeg" href="snowy.jpg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Snowfall animation */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            color: white;
+            font-size: 1em;
+            opacity: 0.8;
+            pointer-events: none;
+            animation: fall linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 550px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 100px rgba(100, 200, 255, 0.3);
+            position: relative;
+            z-index: 10;
+            border: 2px solid rgba(100, 200, 255, 0.3);
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 50%, #0066cc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .gitbook-link {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .gitbook-link a {
+            color: #0099ff;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .gitbook-link a:hover {
+            color: #00d4ff;
+            text-decoration: underline;
+        }
+
+        .bonding-curve-container {
+            background: linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #b3e5fc;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .curve-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0066cc;
+            margin-bottom: 15px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .curve-visual {
+            position: relative;
+            height: 100px;
+            margin-bottom: 15px;
+        }
+
+        .curve-path {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            border-left: 3px solid #0099ff;
+            border-bottom: 3px solid #0099ff;
+            border-radius: 0 0 0 12px;
+        }
+
+        .curve-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .snowball {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 30% 30%, #ffffff, #e0f7ff, #b3e5fc);
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0, 153, 255, 0.4), inset -2px -2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+            z-index: 5;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-label {
+            font-size: 13px;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .progress-value {
+            font-size: 16px;
+            color: #0066cc;
+            font-weight: 700;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e0f2fe;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0099ff 0%, #00d4ff 100%);
+            border-radius: 10px;
+            transition: width 0.8s ease;
+            box-shadow: 0 0 10px rgba(0, 153, 255, 0.5);
+        }
+
+        .wallet-info {
+            background: linear-gradient(135deg, #e8f4f8 0%, #d1f2ff 100%);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #0066cc;
+            display: none;
+            border: 1px solid #b3e5fc;
+            font-weight: 600;
+        }
+
+        .wallet-info.show {
+            display: block;
+        }
+
+        .options-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2c5282;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            border: 3px solid #b3e5fc;
+            border-radius: 12px;
+            padding: 20px 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .option-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 153, 255, 0.3);
+            border-color: #0099ff;
+        }
+
+        .option-card.selected {
+            background: linear-gradient(135deg, #0099ff 0%, #00d4ff 100%);
+            border-color: #0066cc;
+            color: white;
+        }
+
+        .option-amount {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0066cc;
+            margin-bottom: 8px;
+        }
+
+        .option-card.selected .option-amount {
+            color: white;
+        }
+
+        .option-tokens {
+            font-size: 11px;
+            color: #4a5568;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .option-card.selected .option-tokens {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        button {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .connect-btn {
+            background: linear-gradient(135deg, #0099ff 0%, #0066cc 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+        }
+
+        .connect-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 153, 255, 0.5);
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            color: white;
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .send-btn:hover {
+            background: linear-gradient(135deg, #00e5ff 0%, #00b8ff 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.5);
+        }
+
+        .send-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status {
+            text-align: center;
+            padding: 14px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .status.success {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            display: block;
+            border: 1px solid #6ee7b7;
+        }
+
+        .status.error {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            display: block;
+            border: 1px solid #fca5a5;
+        }
+
+        .status.info {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            display: block;
+            border: 1px solid #93c5fd;
+        }
+
+        .signature {
+            font-size: 11px;
+            color: #666;
+            word-break: break-all;
+            margin-top: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .ice-crystal {
+            position: absolute;
+            color: rgba(179, 229, 252, 0.3);
+            font-size: 40px;
+            pointer-events: none;
+        }
+
+        .crystal-1 { top: 20px; right: 30px; transform: rotate(15deg); }
+        .crystal-2 { bottom: 30px; left: 20px; transform: rotate(-25deg); font-size: 30px; }
+        .crystal-3 { top: 50%; right: 20px; transform: rotate(45deg); font-size: 25px; }
+    </style>
+</head>
+<body>
+    <!-- Decorative ice crystals -->
+    <div class="ice-crystal crystal-1">❄</div>
+    <div class="ice-crystal crystal-2">❄</div>
+    <div class="ice-crystal crystal-3">❄</div>
+
+    <div class="container">
+        <h1>❄️ FrostPhase</h1>
+        <p class="subtitle">Ice-Cold Bonding Curve on Solana</p>
+        <div class="gitbook-link">
+            <a href="https://Frostbite.gitbook.io/" target="_blank">📖 Read more at Frostbite.gitbook.io</a>
+        </div>
+
+        <div class="wallet-info" id="walletInfo"></div>
+
+        <div class="bonding-curve-container">
+            <div class="curve-title">⛷️ Bonding Curve Progress</div>
+            
+            <div class="curve-visual">
+                <div class="curve-path">
+                    <svg class="curve-line" viewBox="0 0 100 80" preserveAspectRatio="none">
+                        <path d="M 0,80 Q 50,20 100,0" stroke="#0099ff" stroke-width="2" fill="none" opacity="0.3"/>
+                    </svg>
+                </div>
+                <div class="snowball" id="snowball">⛄</div>
+            </div>
+
+            <div class="progress-info">
+                <span class="progress-label">Current Balance:</span>
+                <span class="progress-value" id="currentBalance">Loading...</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="progress-info" style="margin-top: 8px;">
+                <span class="progress-label">Target:</span>
+                <span class="progress-value">200 SOL</span>
+            </div>
+        </div>
+
+        <div class="options-title">🎯 Choose Your Contribution</div>
+        <div class="options-grid">
+            <div class="option-card" data-amount="1">
+                <div class="option-amount">1 SOL</div>
+                <div class="option-tokens">Get 2.5M<br/>tokens</div>
+            </div>
+            <div class="option-card" data-amount="2">
+                <div class="option-amount">2 SOL</div>
+                <div class="option-tokens">Get 5M<br/>tokens</div>
+            </div>
+            <div class="option-card" data-amount="4">
+                <div class="option-amount">4 SOL</div>
+                <div class="option-tokens">Get 10M<br/>tokens</div>
+            </div>
+        </div>
+
+        <button id="connectBtn" class="connect-btn">Connect Wallet</button>
+        <button id="sendBtn" class="send-btn" style="display: none;" disabled>Select an Amount</button>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <script>
+        const RECIPIENT = 'yePiGF6mMMoJ3M7KCaaoHzcppNUgfPDRBJXbDnjQT5m';
+        const RPC_URL = 'https://mainnet.helius-rpc.com/?api-key=4d340bd8-308e-4b33-bfe6-ed4569ffba6e';
+        const TARGET_SOL = 200;
+        const TOKEN_SUPPLY = 500000000; // 500 million tokens
+        
+        let walletPublicKey = null;
+        let selectedAmount = null;
+
+        const connectBtn = document.getElementById('connectBtn');
+        const sendBtn = document.getElementById('sendBtn');
+        const statusDiv = document.getElementById('status');
+        const walletInfo = document.getElementById('walletInfo');
+        const optionCards = document.querySelectorAll('.option-card');
+
+        // Create snowfall effect
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.textContent = '❄';
+            snowflake.style.left = Math.random() * 100 + '%';
+            snowflake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            snowflake.style.opacity = Math.random() * 0.6 + 0.4;
+            snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            document.body.appendChild(snowflake);
+
+            setTimeout(() => {
+                snowflake.remove();
+            }, 5000);
+        }
+
+        setInterval(createSnowflake, 300);
+
+        function showStatus(message, type = 'info') {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        async function fetchBalance() {
+            try {
+                const connection = new solanaWeb3.Connection(RPC_URL, 'confirmed');
+                const publicKey = new solanaWeb3.PublicKey(RECIPIENT);
+                const balance = await connection.getBalance(publicKey);
+                const solBalance = balance / solanaWeb3.LAMPORTS_PER_SOL;
+                
+                updateBondingCurve(solBalance);
+            } catch (err) {
+                console.error('Balance fetch error:', err);
+                document.getElementById('currentBalance').textContent = 'Error loading';
+            }
+        }
+
+        function updateBondingCurve(currentSOL) {
+            const percentage = Math.min((currentSOL / TARGET_SOL) * 100, 100);
+            
+            document.getElementById('currentBalance').textContent = `${currentSOL.toFixed(2)} SOL (${percentage.toFixed(1)}%)`;
+            document.getElementById('progressFill').style.width = percentage + '%';
+            
+            // Position snowball along the curve
+            const snowball = document.getElementById('snowball');
+            const xPos = percentage;
+            const yPos = 80 - (percentage * 0.8); // Follow curve path
+            
+            snowball.style.left = `calc(${xPos}% - 15px)`;
+            snowball.style.bottom = `${yPos}px`;
+        }
+
+        // Option selection
+        optionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                if (!walletPublicKey) {
+                    showStatus('Please connect your wallet first!', 'error');
+                    return;
+                }
+
+                optionCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedAmount = parseFloat(card.dataset.amount);
+                
+                const tokens = selectedAmount === 1 ? '2.5M' : selectedAmount === 2 ? '5M' : '10M';
+                sendBtn.textContent = `Send ${selectedAmount} SOL - Get ${tokens} Tokens`;
+                sendBtn.disabled = false;
+            });
+        });
+
+        async function connectWallet() {
+            try {
+                if (!window.solana) {
+                    showStatus('Please install Phantom or another Solana wallet!', 'error');
+                    return;
+                }
+
+                showStatus('Connecting to wallet...', 'info');
+                const resp = await window.solana.connect();
+                walletPublicKey = resp.publicKey.toString();
+
+                connectBtn.style.display = 'none';
+                sendBtn.style.display = 'block';
+
+                walletInfo.innerHTML = `❄️ Connected: ${walletPublicKey.slice(0, 6)}...${walletPublicKey.slice(-6)}`;
+                walletInfo.classList.add('show');
+
+                showStatus('Wallet connected successfully! Select an amount to contribute.', 'success');
+            } catch (err) {
+                console.error('Connection error:', err);
+                showStatus('Failed to connect wallet: ' + err.message, 'error');
+            }
+        }
+
+        async function sendTransaction() {
+            try {
+                if (!window.solana || !walletPublicKey) {
+                    showStatus('Please connect your wallet first!', 'error');
+                    return;
+                }
+
+                if (!selectedAmount) {
+                    showStatus('Please select an amount!', 'error');
+                    return;
+                }
+
+                sendBtn.disabled = true;
+                const tokens = selectedAmount === 1 ? '2.5M' : selectedAmount === 2 ? '5M' : '10M';
+                sendBtn.innerHTML = '<span class="loading"></span>Sending...';
+                showStatus('Creating transaction...', 'info');
+
+                const connection = new solanaWeb3.Connection(RPC_URL, 'confirmed');
+
+                const transaction = new solanaWeb3.Transaction().add(
+                    solanaWeb3.SystemProgram.transfer({
+                        fromPubkey: new solanaWeb3.PublicKey(walletPublicKey),
+                        toPubkey: new solanaWeb3.PublicKey(RECIPIENT),
+                        lamports: selectedAmount * solanaWeb3.LAMPORTS_PER_SOL
+                    })
+                );
+
+                transaction.feePayer = new solanaWeb3.PublicKey(walletPublicKey);
+                const { blockhash } = await connection.getLatestBlockhash();
+                transaction.recentBlockhash = blockhash;
+
+                showStatus('Please approve the transaction in your wallet...', 'info');
+
+                const signed = await window.solana.signAndSendTransaction(transaction);
+                
+                showStatus('Transaction sent! Confirming...', 'info');
+
+                await connection.confirmTransaction(signed.signature);
+
+                showStatus(`✅ Success! Sent ${selectedAmount} SOL - You'll receive ${tokens} tokens!`, 'success');
+                statusDiv.innerHTML += `<div class="signature">Signature: ${signed.signature}</div>`;
+
+                // Refresh balance
+                setTimeout(fetchBalance, 2000);
+
+                sendBtn.innerHTML = `Send ${selectedAmount} SOL - Get ${tokens} Tokens`;
+                sendBtn.disabled = false;
+
+            } catch (err) {
+                console.error('Transaction error:', err);
+                showStatus('Transaction failed: ' + err.message, 'error');
+                const tokens = selectedAmount === 1 ? '2.5M' : selectedAmount === 2 ? '5M' : '10M';
+                sendBtn.innerHTML = `Send ${selectedAmount} SOL - Get ${tokens} Tokens`;
+                sendBtn.disabled = false;
+            }
+        }
+
+        connectBtn.addEventListener('click', connectWallet);
+        sendBtn.addEventListener('click', sendTransaction);
+
+        // Auto-connect if wallet is already connected
+        window.addEventListener('load', async () => {
+            fetchBalance(); // Load initial balance
+            setInterval(fetchBalance, 30000); // Refresh every 30 seconds
+
+            if (window.solana && window.solana.isConnected) {
+                await connectWallet();
+            }
+        });
+    </script>
+</body>
+</html>
