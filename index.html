@@ -520,8 +520,20 @@
 
         async function connectWallet() {
             try {
+                // Check if we're on mobile and Phantom is not detected
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                
+                if (!window.solana && isMobile) {
+                    // Deep link to Phantom app with current URL
+                    const currentUrl = encodeURIComponent(window.location.href);
+                    const phantomUrl = `https://phantom.app/ul/browse/${currentUrl}?ref=${currentUrl}`;
+                    showStatus('Redirecting to Phantom app...', 'info');
+                    window.location.href = phantomUrl;
+                    return;
+                }
+                
                 if (!window.solana) {
-                    showStatus('Please install Phantom or another Solana wallet!', 'error');
+                    showStatus('Please install Phantom wallet!', 'error');
                     return;
                 }
 
@@ -614,4 +626,3 @@
     </script>
 </body>
 </html>
-
